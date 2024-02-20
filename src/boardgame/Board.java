@@ -28,6 +28,15 @@ public class Board {
 		this.colums = colums;
 	}
 	
+	//retornar a matriz nas posições row e column
+	public Piece piece(int row, int column) {
+		return pieces[row][column];
+	}
+	
+	//retorna as posições das peças 
+	public Piece piece(Position position) {
+		return pieces[position.getRow()][position.getColumn()];
+	}
 	
 	
 }
