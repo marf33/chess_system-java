@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import boardgame.Board;
 import boardgame.Piece;
@@ -24,6 +25,9 @@ public class ChessMatch {
 	//Importar tabuleiro
 	private Board board;
 	
+	//Para verificar se a partida está em posição de check ou não
+	private boolean check;
+	
 	//Criar jogo
 	public ChessMatch() {
 		//Tamanho do tabuleiro
@@ -43,6 +47,11 @@ public class ChessMatch {
 	public Color getCurrentPlayer() {
 		return currentPlayer;
 	}
+
+	public boolean getCheck() {
+		return check;
+	}
+
 
 	//Retorna uma matriz com peças de xadrez corresponente a uma partida
 	public ChessPiece[][] getPieces() {
@@ -77,6 +86,22 @@ public class ChessMatch {
 		//Validação da posição de destino
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target);
+		
+		//Verificar se o movimento colocou o próprio jogador em check
+		if (testCheck(currentPlayer)) {
+			//Desfazer o movimento
+			undoMove(source, target, capturedPiece);
+			
+			throw new ChessException("You can't put yourself in check");
+		}
+		
+		//Verificar se o oponente se colocou em check
+		if (check = testCheck(opponent(currentPlayer))) {
+			check = true;
+		}
+		else {
+			check =  false;
+		}
 		nextTurn();
 		return (ChessPiece) capturedPiece;
 	}
@@ -98,6 +123,25 @@ public class ChessMatch {
 			capturedPieces.add(capturedPiece);
 		}
 		return capturedPiece;
+	}
+	
+	//Desfazer o movimento da peça
+	private void undoMove(Position source, Position target, Piece capturedPiece) {
+		//Remove a peça movida no destino
+		Piece p = board.removePiece(target);
+		//Devolver à posição de origem
+		board.placePiece(p, source);
+		
+		//Voltar a colocar a peça capturada na posição de destino
+		if (capturedPiece != null) {
+			//Colocar a peça na posição de destino
+			board.placePiece(capturedPiece, target);
+			
+			//Retirar peça da lista de peças capturadas e colocar na lista de peças no tabuleiro
+			capturedPieces.remove(capturedPiece);
+			piecesOnTheBoard.add(capturedPiece);
+			
+		}
 	}
 	
 	//Validação da posição de origem
@@ -134,6 +178,54 @@ public class ChessMatch {
 		}else {
 			currentPlayer = Color.WHITE;
 		}
+	}
+	
+	//Devolve um opponent de uma cor
+	private Color opponent(Color color) {
+		if (color == Color.WHITE) {
+			color = Color.BLACK;
+		}
+		else {
+			color = Color.WHITE;
+		}
+		return color;
+	}
+	
+	//Para localizar um rei de uma determinada cor
+	private ChessPiece king(Color color) {
+		//Procurar na lista de peças em jogo qual é que é o rei dessa cor
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color ).collect(Collectors.toList());
+		
+		//Para cada peça 'piece' na lista 'list'  
+		for (Piece piece : list) {
+			
+			//Se a lista 'piece' for uma instancia King significa que se encotrou o rei
+			if (piece instanceof King) {
+				return (ChessPiece) piece;
+			}
+		}
+		throw new IllegalStateException("There is no " + color + " king on the board");
+	}
+	
+	//Para testar se um rei de uma terminada cor esta em check
+	private boolean testCheck(Color color) {
+		//Ver a posição do rei no formato de matriz
+		Position kingPosition = king(color).getChessPosition().toPosition();
+		
+		//Lista das peças do oponente dessa cor - peças no tabuleiro filtradas com a cor do oponente desse rei
+		List<Piece> opponentePieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == opponent(color)).collect(Collectors.toList());
+		
+		//Para cada peça 'piece' na lista opponentPieces testar se existe algum movimento possivel dessa peça que leva à posição do rei
+		for (Piece piece : opponentePieces) {
+			//Matriz de movimentos possiveis da peça adversária
+			boolean[][] mat = piece.possibleMoves();
+			
+			//Se nesta matriz a posição correspondente à posição do rei for true significa que o rei está em check
+			if (mat[kingPosition.getRow()][kingPosition.getColumn()]) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	//Colocar nova peça com as posições certas a1,a2...em vez de (0,0),(0,1), etc...
