@@ -7,6 +7,10 @@ import chess.pieces.King;
 import chess.pieces.Rook;
 
 public class ChessMatch {
+	
+	private int turn;
+	private Color currentPlayer;
+	
 
 	//Importar tabuleiro
 	private Board board;
@@ -15,10 +19,22 @@ public class ChessMatch {
 	public ChessMatch() {
 		//Tamanho do tabuleiro
 		board = new Board(8, 8);
+		//Turno do jogador
+		turn = 1;
+		//Cor do jogador inicial
+		currentPlayer = Color.WHITE;
 		//Peças no tabuleiro
 		initialSetup();
 	}
 	
+	public int getTurn() {
+		return turn;
+	}
+
+	public Color getCurrentPlayer() {
+		return currentPlayer;
+	}
+
 	//Retorna uma matriz com peças de xadrez corresponente a uma partida
 	public ChessPiece[][] getPieces() {
 		//Matriz de peças de xadrez
@@ -52,6 +68,7 @@ public class ChessMatch {
 		//Validação da posição de destino
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target);
+		nextTurn();
 		return (ChessPiece) capturedPiece;
 	}
 	
@@ -73,6 +90,11 @@ public class ChessMatch {
 			throw new ChessException("There is no piece on source position");
 		}
 		
+		//Verifcar se cor é diferente do jogador atual (peça do adversário)
+		if (currentPlayer != ((ChessPiece) board.piece(position)).getColor()) {
+			throw new ChessException("the chosen piece is not yours");
+		}
+		
 		//Verifcar se existe movimentos possiveis para a peça, se não existir movimentos posssiveis para as peças tambem nao se pode utlizar essa peça como origem
 		if (!board.piece(position).isThereAnyPossibleMove()) {
 			throw new ChessException("There is no possible moves for the chosen piece");
@@ -84,6 +106,16 @@ public class ChessMatch {
 		//Se para a peça de origem, a posição de destino não é um movimento possível, não é possível mexer para o destino
 		if (!board.piece(source).possibleMoves(target)) {
 			throw new ChessException("The chosen piece can't move to target position");
+		}
+	}
+	
+	//Incrementar os turnos das jogadas
+	private void nextTurn() {
+		turn++;
+		if (currentPlayer == Color.WHITE) {
+			currentPlayer = Color.BLACK;
+		}else {
+			currentPlayer = Color.WHITE;
 		}
 	}
 
