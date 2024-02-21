@@ -14,6 +14,13 @@ public class King extends ChessPiece{
 	public String toString() {
 		return "K";
 	}
+
+	//Moviemntos possiveis de um rei
+	@Override
+	public boolean[][] possibleMoves() {
+		boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColums()];
+		return mat;
+	}
 	
 	
 
