@@ -22,7 +22,7 @@ public class Program {
 		//Definir lista de peças
 		List<ChessPiece> captured = new ArrayList<ChessPiece>();
 		
-		while (true) {
+		while (!chessMatch.getCheckMate()) {
 			try {
 				UI.clearScreen();
 				//imprimir o tanuleiro no ecra
@@ -59,7 +59,8 @@ public class Program {
 				sc.nextLine();
 			}
 		}
-		
+		UI.clearScreen();
+		UI.printMatch(chessMatch, captured);
 
 	}
 

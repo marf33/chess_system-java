@@ -64,13 +64,25 @@ public class UI {
 		printCapturedPieces(captured);
 		System.out.println();
 		System.out.println("Turn : " + chessMatch.getTurn());
-		System.out.println("Waiting player: " + chessMatch.getCurrentPlayer());
-		
-		//Informação de check
-		if (chessMatch.getCheck()) {
-			System.out.println("CHECK!");
+<<<<<<< HEAD
+		//Verificar se está em checkMate
+		if (!chessMatch.getCheckMate()) {
+			System.out.println("Waiting player: " + chessMatch.getCurrentPlayer());
+			if (chessMatch.getCheck()) {
+				System.out.println("CHECK!");
+			}
 		}
+		else {
+			System.out.println("CHECKMATE!");
+			System.out.println("Winner: " + chessMatch.getCurrentPlayer());
+		}
+		
+	}	
+		
+=======
+		System.out.println("Waiting player: " + chessMatch.getCurrentPlayer());
 	}
+>>>>>>> parent of b651fe5 (Check logic)
 	
 	//Imprimir tabuleiro
 	public static void printBoard(ChessPiece[][] pieces) {

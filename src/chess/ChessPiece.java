@@ -17,12 +17,6 @@ public abstract class ChessPiece extends Piece{
 		return color;
 	}
 	
-	//Retorna uma posição no formato do xadrez
-	public ChessPosition getChessPosition() {
-		//Posição da minha peça
-		return ChessPosition.fromPosition(position);
-	}
-	
 	//Para saber se existe uma peça adversária em uma dada posição(casa)
 	protected boolean isThereOpponentPiece(Position position) {
 		//p recebe a posição da peça que estiver no tabuleiro

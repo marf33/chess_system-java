@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import boardgame.Board;
 import boardgame.Piece;
@@ -25,9 +24,14 @@ public class ChessMatch {
 	//Importar tabuleiro
 	private Board board;
 	
+<<<<<<< HEAD
 	//Para verificar se a partida está em posição de check ou não
 	private boolean check;
 	
+	private boolean checkMate;
+	
+=======
+>>>>>>> parent of b651fe5 (Check logic)
 	//Criar jogo
 	public ChessMatch() {
 		//Tamanho do tabuleiro
@@ -48,11 +52,17 @@ public class ChessMatch {
 		return currentPlayer;
 	}
 
+<<<<<<< HEAD
 	public boolean getCheck() {
 		return check;
 	}
+	
+	public boolean getCheckMate() {
+		return checkMate;
+	}
 
-
+=======
+>>>>>>> parent of b651fe5 (Check logic)
 	//Retorna uma matriz com peças de xadrez corresponente a uma partida
 	public ChessPiece[][] getPieces() {
 		//Matriz de peças de xadrez
@@ -86,6 +96,7 @@ public class ChessMatch {
 		//Validação da posição de destino
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target);
+<<<<<<< HEAD
 		
 		//Verificar se o movimento colocou o próprio jogador em check
 		if (testCheck(currentPlayer)) {
@@ -102,7 +113,18 @@ public class ChessMatch {
 		else {
 			check =  false;
 		}
+		
+		//Verificar se a jogada do jogador deixou o oponente em checkMate o jogo tem de acabar
+		if (testCheckMate(opponent(currentPlayer))) {
+			checkMate = true;
+		}
+		else {
+			nextTurn();	
+		}
+		
+=======
 		nextTurn();
+>>>>>>> parent of b651fe5 (Check logic)
 		return (ChessPiece) capturedPiece;
 	}
 	
@@ -123,25 +145,6 @@ public class ChessMatch {
 			capturedPieces.add(capturedPiece);
 		}
 		return capturedPiece;
-	}
-	
-	//Desfazer o movimento da peça
-	private void undoMove(Position source, Position target, Piece capturedPiece) {
-		//Remove a peça movida no destino
-		Piece p = board.removePiece(target);
-		//Devolver à posição de origem
-		board.placePiece(p, source);
-		
-		//Voltar a colocar a peça capturada na posição de destino
-		if (capturedPiece != null) {
-			//Colocar a peça na posição de destino
-			board.placePiece(capturedPiece, target);
-			
-			//Retirar peça da lista de peças capturadas e colocar na lista de peças no tabuleiro
-			capturedPieces.remove(capturedPiece);
-			piecesOnTheBoard.add(capturedPiece);
-			
-		}
 	}
 	
 	//Validação da posição de origem
@@ -179,6 +182,7 @@ public class ChessMatch {
 			currentPlayer = Color.WHITE;
 		}
 	}
+<<<<<<< HEAD
 	
 	//Devolve um opponent de uma cor
 	private Color opponent(Color color) {
@@ -227,6 +231,53 @@ public class ChessMatch {
 		}
 		return false;
 	}
+	
+	//Para testar se o Rei está em checkMate ou seja, quando o rei está em check e não existe nenhum movimento possível de qualquer peça da cor dele que tire o rei do check
+	private boolean testCheckMate(Color color) {
+		//Retirar a possbilidade de estar em check
+		if (!testCheck(color)) {
+			return false;
+		}
+		
+		//Se todas as peças da mesma cor não tiverem nenhum movimento possivel que tire do check, está em checkMate
+		//Lista contem todas as peças da mesma cor
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
+		
+		//Percorre todas as peças 'piece' pertencentes à lista
+		for (Piece piece : list) {
+			//Se exisitr alguma peça 'piece' na lista que possua um movimento que tire do check então retorna falso
+			boolean[][] mat = piece.possibleMoves();
+			for (int i = 0; i < board.getRows(); i++) {
+				for (int j = 0; j < board.getColums(); j++) {
+					//Moviemnto possivel
+					if (mat[i][j]) {
+						//Posição da peça 'piece' -> posição no formato de Xadrez
+						Position source = ((ChessPiece)piece).getChessPosition().toPosition();
+						//Posição de Destino
+						Position target = new Position(i, j);
+						
+						//Fazer o movimento da peça 'piece' da origem para o destino
+						Piece capturedPiece = makeMove(source, target);
+						
+						//Verificar se ainda está em check
+						boolean testCheck = testCheck(color);
+						
+						//Desfazer moviemnto
+						undoMove(source, target, capturedPiece);
+						
+						//Verificar check
+						if (!testCheck) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		//Está em checkMate
+		return true;
+	}
+=======
+>>>>>>> parent of b651fe5 (Check logic)
 
 	//Colocar nova peça com as posições certas a1,a2...em vez de (0,0),(0,1), etc...
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
@@ -238,18 +289,13 @@ public class ChessMatch {
 	
 	//Colocar peças no tabuleiro
 	private void initialSetup() {
-		placeNewPiece('c', 1, new Rook(board, Color.WHITE));
-        placeNewPiece('c', 2, new Rook(board, Color.WHITE));
-        placeNewPiece('d', 2, new Rook(board, Color.WHITE));
-        placeNewPiece('e', 2, new Rook(board, Color.WHITE));
-        placeNewPiece('e', 1, new Rook(board, Color.WHITE));
-        placeNewPiece('d', 1, new King(board, Color.WHITE));
+		placeNewPiece('h', 7, new Rook(board, Color.WHITE));
+        placeNewPiece('d', 1, new Rook(board, Color.WHITE));
+        placeNewPiece('e', 1, new King(board, Color.WHITE));
 
-        placeNewPiece('c', 7, new Rook(board, Color.BLACK));
-        placeNewPiece('c', 8, new Rook(board, Color.BLACK));
-        placeNewPiece('d', 7, new Rook(board, Color.BLACK));
-        placeNewPiece('e', 7, new Rook(board, Color.BLACK));
-        placeNewPiece('e', 8, new Rook(board, Color.BLACK));
-        placeNewPiece('d', 8, new King(board, Color.BLACK));
+
+        placeNewPiece('b', 8, new Rook(board, Color.BLACK));
+        placeNewPiece('a', 8, new King(board, Color.BLACK));
+
 	}
 }
