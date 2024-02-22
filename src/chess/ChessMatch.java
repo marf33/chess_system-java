@@ -20,7 +20,6 @@ public class ChessMatch {
 	//Lista de peças capturadas
 	private List<Piece> capturedPieces = new ArrayList<Piece>();
 	
-
 	//Importar tabuleiro
 	private Board board;
 	
