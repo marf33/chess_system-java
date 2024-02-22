@@ -139,6 +139,42 @@ public class ChessMatch {
 			//Adicionar peça na lista de peças capturadas
 			capturedPieces.add(capturedPiece);
 		}
+		
+		//Se moveu o rei 2 casas para a direita é uma torre "pequena"
+		//Se moveu o rei 2 casas para a esquerda é uma torre "grande" 
+		//Então temos que mover a torre manualmente (Specialmove castling kingside rook)
+		//Verificar se a peça 'p' é uma instância de rei e a posição de destino  = posição de origem + 2 significa que o rei andou 2 casas para a direita
+		if (p instanceof King && target.getColumn() == source.getColumn() + 2) {
+			//Posição de origem da torre
+			Position sourceT = new Position(source.getRow(), source.getColumn() + 3);
+			//Posição de destino da torre
+			Position targetT = new Position(source.getRow(), source.getColumn() + 1);
+			//Apanhar(Pegar/Retirar) a torre que estava nessa posição
+			ChessPiece rook = (ChessPiece) board.removePiece(sourceT);
+			//Colocar a torre na posição de destino dela
+			board.placePiece(rook, targetT);
+			//Incrementar a quantidade de movimentos
+			rook.increaseMoveCount();
+		}
+		
+		
+		//Se moveu o rei 2 casas para a direita é uma torre "pequena"
+		//Se moveu o rei 2 casas para a esquerda é uma torre "grande" 
+		//Então temos que mover a torre manualmente (Specialmove castling queenside rook)
+		//Verificar se a peça 'p' é uma instância de rei e a posição de destino  = posição de origem - 2 significa que o rei andou 2 casas para a esquerda
+		if (p instanceof King && target.getColumn() == source.getColumn() - 2) {
+			//Posição de origem da torre
+			Position sourceT = new Position(source.getRow(), source.getColumn() - 4);
+			//Posição de destino da torre
+			Position targetT = new Position(source.getRow(), source.getColumn() - 1);
+			//Apanhar(Pegar/Retirar) a torre que estava nessa posição
+			ChessPiece rook = (ChessPiece) board.removePiece(sourceT);
+			//Colocar a torre na posição de destino dela
+			board.placePiece(rook, targetT);
+			//Incrementar a quantidade de movimentos
+			rook.increaseMoveCount();
+		}
+		
 		return capturedPiece;
 	}
 	
@@ -163,6 +199,43 @@ public class ChessMatch {
 			piecesOnTheBoard.add(capturedPiece);
 			
 		}
+		
+		//Se moveu o rei 2 casas para a direita é uma torre "pequena"
+				//Se moveu o rei 2 casas para a esquerda é uma torre "grande" 
+				//Então temos que mover a torre manualmente (Specialmove castling kingside rook)
+				//Verificar se a peça 'p' é uma instância de rei e a posição de destino  = posição de origem + 2 significa que o rei andou 2 casas para a direita
+				if (p instanceof King && target.getColumn() == source.getColumn() + 2) {
+					//Posição de origem da torre
+					Position sourceT = new Position(source.getRow(), source.getColumn() + 3);
+					//Posição de destino da torre
+					Position targetT = new Position(source.getRow(), source.getColumn() + 1);
+					//Apanhar(Pegar/Retirar) a torre que estava nessa posição
+					ChessPiece rook = (ChessPiece) board.removePiece(targetT);
+					//Colocar a torre na posição de destino dela
+					board.placePiece(rook, sourceT);
+					//Incrementar a quantidade de movimentos
+					rook.decreaseMoveCount();
+				}
+				
+				
+				//Se moveu o rei 2 casas para a direita é uma torre "pequena"
+				//Se moveu o rei 2 casas para a esquerda é uma torre "grande" 
+				//Então temos que mover a torre manualmente (Specialmove castling queenside rook)
+				//Verificar se a peça 'p' é uma instância de rei e a posição de destino  = posição de origem - 2 significa que o rei andou 2 casas para a esquerda
+				if (p instanceof King && target.getColumn() == source.getColumn() - 2) {
+					//Posição de origem da torre
+					Position sourceT = new Position(source.getRow(), source.getColumn() - 4);
+					//Posição de destino da torre
+					Position targetT = new Position(source.getRow(), source.getColumn() - 1);
+					//Apanhar(Pegar/Retirar) a torre que estava nessa posição
+					ChessPiece rook = (ChessPiece) board.removePiece(targetT);
+					//Colocar a torre na posição de destino dela
+					board.placePiece(rook, sourceT);
+					//Incrementar a quantidade de movimentos
+					rook.decreaseMoveCount();
+				}
+		
+		
 	}
 	
 	//Validação da posição de origem
@@ -310,7 +383,7 @@ public class ChessMatch {
 		placeNewPiece('b', 1, new Knight(board, Color.WHITE));
 		placeNewPiece('c', 1, new Bishop(board, Color.WHITE));
 		placeNewPiece('d', 1, new Queen(board, Color.WHITE));
-        placeNewPiece('e', 1, new King(board, Color.WHITE));
+        placeNewPiece('e', 1, new King(board, Color.WHITE, this));
         placeNewPiece('f', 1, new Bishop(board, Color.WHITE));
         placeNewPiece('g', 1, new Knight(board, Color.WHITE));
         placeNewPiece('h', 1, new Rook(board, Color.WHITE));
@@ -327,7 +400,7 @@ public class ChessMatch {
         placeNewPiece('b', 8, new Knight(board, Color.BLACK));
         placeNewPiece('c', 8, new Bishop(board, Color.BLACK));
         placeNewPiece('d', 8, new Queen(board, Color.BLACK));
-        placeNewPiece('e', 8, new King(board, Color.BLACK));
+        placeNewPiece('e', 8, new King(board, Color.BLACK, this));
         placeNewPiece('f', 8, new Bishop(board, Color.BLACK));
         placeNewPiece('g', 8, new Knight(board, Color.BLACK));
         placeNewPiece('h', 8, new Rook(board, Color.BLACK));
